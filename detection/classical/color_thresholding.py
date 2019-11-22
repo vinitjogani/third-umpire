@@ -21,8 +21,8 @@ def reds(out):
     norm = out / out.max(axis=2)[:, :, np.newaxis]
 
     cond = (norm[:, :, 2] < 0.9)
-    cond = (norm[:, :, 1] > 0.7) | cond
-    cond = (norm[:, :, 0] > 0.7) | cond
+    cond = (norm[:, :, 1] > 0.80) | cond
+    cond = (norm[:, :, 0] > 0.80) | cond
     cond = np.dstack((cond, cond, cond))
     
     norm_out = out.copy()
@@ -31,7 +31,7 @@ def reds(out):
 
 def bails_off(out):
     # Blur, trim and extract the reds
-    out = cv.GaussianBlur(out, (9, 9), 5).astype('float')
+    out = cv.GaussianBlur(out, (9, 9), 3).astype('float')
     h = out.shape[0]
     out = out[h//4:3*h//4]
     out = reds(out)
@@ -47,7 +47,7 @@ def get_response(path):
     if y.std() == 0: y += np.random.randn(y.shape[0])
     z = (y - y.mean()) / y.std()
     
-    where = np.where(z > z.min() + 1)[0]
+    where = np.where(z > z.min() + 1.5)[0]
     if len(where) == 0: when_off = 0
     else: when_off = np.min(where)
     return z, when_off, frame

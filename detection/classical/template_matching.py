@@ -40,12 +40,12 @@ def pyramid(I, min_height=20, decay=0.9):
         I = cv.resize(I, (int(I.shape[1] * decay), int(I.shape[0] * decay)))
 
 def match(I, t, decay=0.9):
-    I = cv.cvtColor(I, cv.COLOR_BGR2LAB)
-    t = cv.cvtColor(t, cv.COLOR_BGR2LAB)
+    I = cv.cvtColor(I, cv.COLOR_BGR2YCrCb)
+    t = cv.cvtColor(t, cv.COLOR_BGR2YCrCb)
     # Find matches on different scales
     matches = []
     for img in pyramid(I, 100, decay):
-        match = 1 - cv.matchTemplate(img, t, cv.TM_SQDIFF_NORMED)
+        match = cv.matchTemplate(img, t, cv.TM_CCORR_NORMED)
         matches.append(match)
         
     # Find maxima
@@ -93,7 +93,6 @@ def draw_box(frame):
 
 def pipeline(path):
     for idx, frame in utils.video(path):
-        if (idx % 2) != 0: continue        
         frame = cv.resize(frame, (int(350*frame.shape[1]/frame.shape[0]), 350))
         draw_box(frame)
         yield frame
