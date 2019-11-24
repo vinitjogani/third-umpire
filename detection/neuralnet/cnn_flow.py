@@ -111,8 +111,8 @@ def main():
 
     cb = []
     cb.append(keras.callbacks.ReduceLROnPlateau())
-    cb.append(keras.callbacks.ModelCheckpoint('crease_of.h5', save_weights_only=True, save_best_only=True))
-    cb.append(keras.callbacks.TensorBoard(log_dir='crease'))
+    # cb.append(keras.callbacks.ModelCheckpoint('crease_of.h5', save_weights_only=True, save_best_only=True))
+    cb.append(keras.callbacks.ModelCheckpoint('crease.h5', save_weights_only=True, save_best_only=True))
     model = build_model()
     model.fit(
         train[:2], train[2],
