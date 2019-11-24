@@ -86,10 +86,9 @@ def pipeline(path):
         idx += 1
 
 
-# vids = list(os.listdir(VIDEOS_PATH))
-# for vid in vids:
-#     if not os.path.exists(OUT_PATH + vid):
-#         utils.writer(pipeline(VIDEOS_PATH+vid), OUT_PATH + vid)
-    # utils.player(pipeline(VIDEOS_PATH+vid), 25)
-
-utils.writer(pipeline('Guptill_trim.mp4'), OUT_PATH + 'Guptill.mp4')
+def main():
+    vids = list(os.listdir(VIDEOS_PATH))
+    for vid in vids:
+        if not os.path.exists(OUT_PATH + vid):
+            utils.writer(pipeline(VIDEOS_PATH+vid), OUT_PATH + vid)
+        # utils.player(pipeline(VIDEOS_PATH+vid), 25)
