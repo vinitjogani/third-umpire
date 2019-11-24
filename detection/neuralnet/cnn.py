@@ -23,27 +23,27 @@ FRAMES_PATH = 'dataset/frames/'
 ### Helpers
 ###
 
-def load(img):
+def load(img, size=(100,50)):
     h = img.shape[0]
     img = img[h//4:(4*h)//5]
-    img = cv.resize(img, (100,50))
+    img = cv.resize(img, size)
     return img.astype('float32') / 255
 
 
-def load_all():
+def load_all(loader=load):
     dataset = {}
     for label in os.listdir(FRAMES_PATH):
         output = []
         label_path = os.path.join(FRAMES_PATH, label)
         for image_file in os.listdir(label_path):
-            output.append(load(cv.imread(os.path.join(label_path, image_file))))
+            output.append(loader(cv.imread(os.path.join(label_path, image_file))))
         dataset[label] = output
     return dataset
 
 
-def get_data():
+def get_data(loader=load):
     X,Y = [],[]
-    dataset = load_all()
+    dataset = load_all(loader)
     for label in dataset:
         X.extend(dataset[label])
         Y.extend([(float(label[0]), float(label[1]))]*len(dataset[label]))
