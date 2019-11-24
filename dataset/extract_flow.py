@@ -58,7 +58,7 @@ def get_flow(previous, frame):
     return mag, ang
 
 
-def flow_video(video):
+def flow_video(video, min_flow=1):
     cap = cv.VideoCapture(video)
     ret, previous = cap.read()
     if not ret: return [],[],[]
@@ -77,7 +77,7 @@ def flow_video(video):
         prvs_of.append(mag)
 
         mag[np.isinf(mag)] = 0
-        if mag.max() < 1: continue  
+        if mag.max() < min_flow: continue  
         hsv[...,0] = ang*180/np.pi/2
         hsv[...,2] = cv.normalize(np.mean(prvs_of, axis=0), None, 0, 255, cv.NORM_MINMAX)
         bgr = cv.cvtColor(hsv.astype('uint8'),cv.COLOR_HSV2BGR)
@@ -85,7 +85,7 @@ def flow_video(video):
         previous = frame
         i, prvs_of = i+1, []
         frame = cv.resize(frame, WORKING_SIZE)
-        chan = cv.resize(max_chan(blur(bgr)), WORKING_SIZE).astype('float') / 255
+        chan = cv.resize(max_chan(blur(bgr)), WORKING_SIZE).astype('float32') / 255
         yield (org, frame, chan)
 
 
@@ -105,6 +105,7 @@ def process(video):
         cv.imwrite(path+'_flow.png', (chan[i]*255).astype('uint8'))
 
 
-vids = list(os.listdir(VIDEOS_PATH))
-for vid in vids:
-    process(VIDEOS_PATH+vid)
+def main():
+    vids = list(os.listdir(VIDEOS_PATH))
+    for vid in vids:
+        process(VIDEOS_PATH+vid)

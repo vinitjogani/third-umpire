@@ -31,26 +31,31 @@ def augment(I1, I2):
 	if np.random.random() < 0.5:
 		I1 = I1[:, ::-1, :]
 		I2 = I2[:, ::-1, :]
-	if np.random.random() < 0.5:
-		I1 = I1[::-1, :, :]
-		I2 = I2[::-1, :, :]
 
 	# Augmentation 2: Gaussian noise
-	if np.random.random() < 0.25:
-		noise_level = 0.01 * np.random.random()
+	if np.random.random() < 0.30:
+		noise_level = 0.02 * np.random.random()
 		I1 = I1 + np.random.randn(*I1.shape) * noise_level
 		I1 = np.clip(I1, 0, 1)
 		
 	# Augmentation 3: Brightness change
-	if np.random.random() < 0.25:
-		change = 1 - (np.random.random()*2 - 1) * 0.05
+	if np.random.random() < 0.30:
+		change = 1 - (np.random.random()*2 - 1) * 0.02
 		I1 = np.clip(I1 * change, 0, 1)
 
 	return I1, I2
 
-def generator(X, Y, batch_size):
-    X_gray = X.mean(axis=3)[:,:,:,np.newaxis]
+def generator(X, Y, batch_size=32):
     while True:
         batch = np.random.randint(len(X), size=batch_size)
         augmented = [augment(i,i)[0] for i in X[batch]]
         yield (np.array(augmented), Y[batch])
+
+
+def flow_generator(X1, X2, Y, batch_size=32):
+    while True:
+        batch = np.random.randint(len(X1), size=batch_size)
+        x1, x2, y = X1[batch], X2[batch], Y[batch]
+        augmented = [augment(x1[i],x2[i]) for i in range(batch_size)]
+        x_frame, x_flow = zip(*augmented)
+        yield ([np.array(x_frame), np.array(x_flow)], Y[batch])
