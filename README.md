@@ -1,2 +1,2 @@
 # third-umpire
-CSC420 project
+To run any module, import it in run.py and then run "python run.py".
